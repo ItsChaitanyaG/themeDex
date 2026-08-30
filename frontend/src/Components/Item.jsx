@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../Utils/axiosInstance";
 import { useNavigate, useParams } from "react-router-dom";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function Item() {
 
@@ -48,7 +50,7 @@ export default function Item() {
           <div className="hero-content flex-col lg:flex-col">
             <button className="btn btn-ghost" onClick={home}>Back</button>
             <h1 className="text-5xl font-bold self-start">{theme.name}</h1>
-            
+
             <div className="flex-col justify-center">
               <div className="carousel w-full">
                 <div id="slide3" className="carousel-item relative w-full">
@@ -91,13 +93,15 @@ export default function Item() {
                   <div className="collapse bg-base-100 border border-base-300">
                     <input type="checkbox" />
                     <div className="collapse-title font-semibold">Here's your Guide ;) :</div>
-                    <div className="collapse-content text-sm">
-                      {guide}
+                    <div className="collapse-content text-sm guide-markdown">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {guide}
+                      </ReactMarkdown>
                     </div>
                   </div>
               </div>
             </div>
-            
+
             </div>
           </div>
         </div>

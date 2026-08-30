@@ -4,6 +4,7 @@ import ApiError from "../utils/ApiError.js";
 import { Theme } from "../models/theme.model.js";
 import { genGuidePrompt, systemInstruction } from "../utils/genAiPrompts.js";
 import groq from "../services/grokService.js";
+import axios from "axios";
 
 console.log('GROQ KEY:', process.env.GROQ_API_KEY)
 
@@ -75,7 +76,7 @@ const fetchTheme = async (userId, githubUrl, platform) => {
       })
 
     images = [...markdownImages, ...htmlImages].filter(Boolean)
-}
+  }
 
   return await Theme.create({
     name: repo.name,
@@ -135,6 +136,26 @@ const addTheme = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, theme, "Theme added successfully"));
 });
 
+const analyseRepo = async (githubUrl) => {
+  try {
+    if (!githubUrl) return null;
+      const match = githubUrl.match(
+        /^https?:\/\/(www\.)?github.com\/(?<owner>[\w.-]+)\/(?<name>[\w.-]+)/
+      );
+    if (!match || !(match.groups?.owner && match.groups?.name)) return null;
+
+    const owner = match.groups.owner;
+    const repo = match.groups.name;
+
+    const repoData = await axios.get(`${process.env.REPO_ANALYZER_URL}/analyze`, { params: { "owner": owner, "repo": repo } })
+
+    return repoData.data;
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 const generateThemeGuide = asyncHandler(async (req, res) => {
   const theme = await Theme.findById(req.params.id);
 
@@ -142,7 +163,9 @@ const generateThemeGuide = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Theme not found");
   }
 
-  const guide = await genGuide(genGuidePrompt(theme));
+  const repoData = await analyseRepo(theme.githubUrl);
+
+  const guide = await genGuide(genGuidePrompt(theme, repoData));
 
   if (!guide) {
     throw new ApiError(500, "Failed to generate guide");
