@@ -32,7 +32,10 @@ async def get_file(url):
     return new_data
 
 async def get_fileTree(owner, repo):
-    url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/main?recursive=1"
+    branch = await get_default_branch(owner, repo)
+
+
+    url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
 
     async with httpx.AsyncClient() as client:
         res = await client.get(url)
@@ -44,3 +47,15 @@ async def get_fileTree(owner, repo):
     tree = data["tree"]
 
     return tree
+
+async def get_default_branch(owner, repo):
+    url = f"https://api.github.com/repos/{owner}/{repo}"
+
+    async with httpx.AsyncClient() as client:
+        res = await client.get(url)
+
+    res.raise_for_status()
+
+    data = res.json()
+
+    return data["default_branch"]

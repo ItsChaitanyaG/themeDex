@@ -18,10 +18,8 @@ app.use(cookieParser());
 
 //routes import
 import themeRoutes from "./routes/theme.routes.js";
-import userRoutes from "./routes/user.routes.js";
 
 //routes decleration
 app.use("/api/v1/themes", themeRoutes);
-app.use("/api/v1/users", userRoutes);
 
 export default app;

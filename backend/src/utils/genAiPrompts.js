@@ -18,11 +18,11 @@ Respond in Markdown using exactly this structure:
 If asked anything unrelated to theme installation, respond only with:
 "I can only help with theme installation."`;
 
-export const genGuidePrompt = (theme, repoData) => `
-Theme Name: ${theme.name}
-Platform: ${theme.platform}
-Description: ${theme.description}
-GitHub: ${theme.githubUrl}
+export const genGuidePrompt = (repoData) => `
+Theme Name:
+Platform:
+Description:
+GitHub:
 
 README:
 ${repoData.readme}
