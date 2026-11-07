@@ -15,8 +15,9 @@ Respond in Markdown using exactly this structure:
 ## Installation Steps
 ## Common Issues
 
-If asked anything unrelated to theme installation, respond only with:
-"I can only help with theme installation."`;
+If provided repository is not related to customization, respond:
+"Given repository is not about customization."
+`;
 
 export const genGuidePrompt = (repoData) => `
 Theme Name:
@@ -28,7 +29,7 @@ README:
 ${repoData.readme}
 
 Scripts:
-${repoData.scripts.map(s => `--- ${s.file_path} ---\n${s.content}`).join('\n\n')}
+${repoData.scripts.map(s => `--- ${s.filePath} ---\n${s.content}`).join('\n\n')}
 
 Generate installation steps for this theme.
 `;
