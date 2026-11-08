@@ -8,16 +8,16 @@ dotenv.config({
 
 const port = process.env.PORT || 5001;
 
-// await connectDB()
-//   .then(() => {
-//     app.listen(port, () => {
-//       console.log(`Server is running on port ${port}`);
-//     });
-//   })
-//   .catch((err) => {
-//     console.log("DB connection failed :", err);
-//   });
+await connectDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.log("DB connection failed :", err);
+  });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-})
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// })

@@ -4,6 +4,8 @@ import ApiError from "../utils/ApiError.js";
 import { genGuidePrompt, systemInstruction } from "../utils/genAiPrompts.js";
 import groq from "../services/grokService.js";
 import analyse from "../services/repoParser.js";
+import searchGuide from "../services/guideSearch.js";
+import { Guide } from "../models/theme.model.js";
 
 const genGuide = async (prompt) => {
   try {
@@ -55,6 +57,13 @@ const generateThemeGuide = asyncHandler(async (req, res) => {
     throw new ApiError(400, "githubUrl is required");
   }
 
+  const existingGuide = await searchGuide(githubUrl);
+
+  if (existingGuide) {
+    return res.status(200)
+      .json(new ApiResponse(200, existingGuide, "Guide served successfully"))
+  }
+
   const repoData = await analyseRepo(githubUrl);
 
   const guide = await genGuide(genGuidePrompt(repoData));
@@ -62,6 +71,12 @@ const generateThemeGuide = asyncHandler(async (req, res) => {
   if (!guide) {
     throw new ApiError(500, "Failed to generate guide");
   }
+
+  await Guide.create({
+    content: guide,
+    generatedAt: new Date(),
+    githubUrl: githubUrl,
+  })
 
   res
     .status(200)
