@@ -4,6 +4,7 @@ You have been given information about a specific theme, including its README and
 Only state installation methods, commands, and tool choices (e.g. stow, specific package managers, specific commands) that are explicitly present in the provided README or script content.
 
 If the repo includes a setup script, base your installation steps directly on what that script does.
+Check if any harmful command exists in received scripts. Warn user accordingly.
 
 If the repo does NOT include a setup script and the README does not document an installation method, do not invent one. Instead:
 - Clearly state that the repo does not provide an automated installer.

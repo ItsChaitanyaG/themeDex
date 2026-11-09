@@ -19,9 +19,40 @@ const analyse = async (owner, repo) => {
     scripts : [],
   }
 
+//   if (!readmeData) {
+//     const SCRIPT_RE = /(^|\/)(install|setup|bootstrap)[^/]*\.sh$/i;
+//
+//     const scriptItems = tree
+//       .filter((i) => i.type === "blob" && SCRIPT_RE.test(i.path) && (i.size ?? 0) < 100_000)
+//       .slice(0, 5);
+//
+//     if (!scriptItems) return fileData;
+//
+//     for (const item of scriptItems) {
+//       const content = await getFile(item.url);
+//       if (content) fileData.scripts.push({ "filePath": item.path, "content": content });
+//     }
+//
+//     return fileData;
+//   }
+
   const matches = [...new Set(readmeData?.match(/[\w./-]+\.sh/g) ?? [])];
 
   if (matches.length === 0) {
+    // return fileData;
+    const SCRIPT_RE = /(^|\/)(install|setup|bootstrap)[^/]*\.sh$/i;
+
+    const scriptItems = tree
+      .filter((i) => i.type === "blob" && SCRIPT_RE.test(i.path) && (i.size ?? 0) < 100_000)
+      .slice(0, 5);
+
+    if (!scriptItems) return fileData;
+
+    for (const item of scriptItems) {
+      const content = await getFile(item.url);
+      if (content) fileData.scripts.push({ "filePath": item.path, "content": content });
+    }
+
     return fileData;
   }
 
