@@ -73,11 +73,9 @@ const generateThemeGuide = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Failed to generate guide");
   }
 
-  await Guide.findOneAndUpdate({
-    content: guide,
-    generatedAt: new Date(),
-    githubUrl: githubUrl,
-  }, {upsert: true})
+  await Guide.findOneAndUpdate({ githubUrl },
+    { $set: { content: guide, generatedAt: new Date() } },
+    { upsert: true })
 
   res
     .status(200)
