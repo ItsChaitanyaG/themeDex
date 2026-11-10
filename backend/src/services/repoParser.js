@@ -5,7 +5,7 @@ const analyse = async (owner, repo) => {
   const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
 
   if (!repoRes.ok) {
-    throw new ApiError(404, "Repository not found");
+    throw new ApiError(403, "Repository not found");
   }
 
   const repoJson = await repoRes.json();
@@ -76,7 +76,7 @@ const getReadme = async(owner, repo) => {
 
   if (res.status === 404) return null;
   if (!res.ok) {
-    throw new ApiError(404, "Failed to fetch Readme");
+    throw new ApiError(403, "Failed to fetch Readme");
   }
 
   const data = await res.json();

@@ -21,11 +21,6 @@ If provided repository is not related to customization, respond:
 `;
 
 export const genGuidePrompt = (repoData) => `
-Theme Name:
-Platform:
-Description:
-GitHub:
-
 README:
 ${repoData.readme}
 

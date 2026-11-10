@@ -30,7 +30,6 @@ const genGuide = async (prompt) => {
 };
 
 const analyseRepo = async (githubUrl) => {
-  try {
     if (!githubUrl) return null;
       const match = githubUrl.match(
         /^https?:\/\/(www\.)?github\.com\/(?<owner>[\w.-]+)\/(?<name>[\w.-]+)/
@@ -44,10 +43,6 @@ const analyseRepo = async (githubUrl) => {
     const repoData = await analyse(owner, repo);
 
     return repoData;
-
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 const generateThemeGuide = asyncHandler(async (req, res) => {
@@ -56,6 +51,8 @@ const generateThemeGuide = asyncHandler(async (req, res) => {
   if (!githubUrl) {
     throw new ApiError(400, "githubUrl is required");
   }
+
+  if (typeof githubUrl !== "string") throw new ApiError(400, "Please enter a valid URL");
 
   const existingGuide = await searchGuide(githubUrl);
 
@@ -66,17 +63,21 @@ const generateThemeGuide = asyncHandler(async (req, res) => {
 
   const repoData = await analyseRepo(githubUrl);
 
+  if (repoData === null) {
+    throw new ApiError(400, "Wrong repository link")
+  }
+
   const guide = await genGuide(genGuidePrompt(repoData));
 
   if (!guide) {
     throw new ApiError(500, "Failed to generate guide");
   }
 
-  await Guide.create({
+  await Guide.findOneAndUpdate({
     content: guide,
     generatedAt: new Date(),
     githubUrl: githubUrl,
-  })
+  }, {upsert: true})
 
   res
     .status(200)

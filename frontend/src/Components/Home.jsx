@@ -29,16 +29,17 @@ export default function Home() {
 
   const handleAnalyze = (e) => {
     e.preventDefault();
-    setLoading(true);
 
     if (!repoUrl.trim()) return;
+
+    setLoading(true);
 
     const getGuide = async () => {
       try {
         const res = await axiosInstance.post("/themes/generateGuide", { githubUrl: repoUrl });
         setGuide(res.data.data);
       } catch (error) {
-        toast.error(error);
+        toast.error(error.response?.data?.message ?? error.message);
       } finally {
         setLoading(false);
       }
